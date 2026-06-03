@@ -5,6 +5,7 @@ export default defineConfig({
   description: 'Workspace + service manager for dev (tmux + Docker + Git worktrees)',
   base: '/tncli-docs/',
   cleanUrls: true,
+  ignoreDeadLinks: true,
 
   themeConfig: {
     nav: [
