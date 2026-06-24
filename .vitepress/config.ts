@@ -7,6 +7,16 @@ export default defineConfig({
   cleanUrls: true,
   ignoreDeadLinks: true,
 
+  // tncli uses `{{template:NAME}}` syntax everywhere — change Vue's
+  // mustache delimiters so the docs aren't parsed as Vue expressions.
+  vue: {
+    template: {
+      compilerOptions: {
+        delimiters: ['[[', ']]'],
+      },
+    },
+  },
+
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/install' },
