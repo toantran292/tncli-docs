@@ -1,7 +1,13 @@
 # CLI commands
 
-`tncli` is a single binary. With no args it opens the TUI; everything
-else is a subcommand.
+`tncli` is a single binary. With no args it launches the **web companion**;
+the terminal UI and everything else are subcommands.
+
+```bash
+tncli                          # launch the web companion (default)
+tncli cli                      # open the terminal UI (TUI)
+tncli web --host 0.0.0.0 --port 8765   # web with explicit bind
+```
 
 ## Project lifecycle
 
@@ -49,13 +55,14 @@ tncli db clean --dry-run       # preview without acting
 
 See [Databases](../guide/databases).
 
-## TUI helpers
+## UI
 
 ```bash
-tncli                          # open the TUI
+tncli                          # launch the web companion (default surface)
+tncli cli                      # open the terminal UI (TUI); alias: tncli ui
+tncli web [--host H] [--port P]  # web companion with explicit bind
 tncli widget <name>            # run a single widget standalone
                                #   names: status-bar, service-info, …
-tncli ui list                  # list installable widgets
 ```
 
 `tncli widget` is normally invoked from `ui.layout.panes[].command` so

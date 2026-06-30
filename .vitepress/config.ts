@@ -7,13 +7,20 @@ export default defineConfig({
   cleanUrls: true,
   ignoreDeadLinks: true,
 
-  // tncli uses `{{template:NAME}}` syntax everywhere — change Vue's
-  // mustache delimiters so the docs aren't parsed as Vue expressions.
-  vue: {
-    template: {
-      compilerOptions: {
-        delimiters: ['[[', ']]'],
-      },
+  // tncli docs are full of `{{var:NAME}}` / `{{db:name}}` templates. Inside
+  // code, Vue's template tokenizer still scans `{{ }}` (even under v-pre)
+  // and errors on the `:` (reads it as a TS annotation). Rather than change
+  // Vue's delimiters globally — which breaks the default theme's own
+  // `{{ }}` — we entity-encode the braces in rendered code so the tokenizer
+  // never sees them; the browser decodes them back to literal `{{ }}`.
+  markdown: {
+    config: (md) => {
+      const enc = (html: string) =>
+        html.replace(/\{\{/g, '&#123;&#123;').replace(/\}\}/g, '&#125;&#125;')
+      for (const rule of ['fence', 'code_inline'] as const) {
+        const orig = md.renderer.rules[rule]!
+        md.renderer.rules[rule] = (...args) => enc(orig(...args))
+      }
     },
   },
 

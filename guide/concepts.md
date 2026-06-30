@@ -71,10 +71,11 @@ combos:
 tncli runs everything inside two tmux sessions:
 
 - `tncli_<project>`: the **service session** holding one window per
-  running service. Survives detaching from the TUI.
-- The current tmux session (where you ran `tncli`) hosts the **TUI
-  window**, which is then split into the tree pane, the log pane, and
-  any widget panes you configured under `ui.layout`.
+  running service. Survives detaching from the TUI or closing the browser.
+- When you run `tncli cli`, the current tmux session hosts the **TUI
+  window**, split into the tree pane, the log pane, and any widget panes
+  you configured under `ui.layout`. The web companion (bare `tncli`)
+  attaches to the same service session over WebSocket instead.
 
 ## Pipeline
 

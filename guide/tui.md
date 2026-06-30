@@ -1,6 +1,7 @@
 # TUI
 
-Run `tncli` to open the TUI. Press `?` for the in-app cheatsheet.
+Run `tncli cli` to open the TUI (bare `tncli` launches the web companion).
+Press `?` for the in-app cheatsheet.
 
 ## Layout
 
