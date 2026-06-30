@@ -9,17 +9,35 @@ for this file — keep it at the monorepo root.
 session: myproject              # tmux session prefix (tncli_<session>)
 default_branch: main            # global default git branch
 preset: dev-tools               # optional preset name applied to every repo
-local_pm: pnpm                  # node package manager hint for the TUI shortcuts
+local_pm: pnpm                  # when "pnpm", rewrite npm/yarn installs to pnpm
 
-environments:                   # named env URL bundles (TUI: press E)
-  staging:
-    api: "https://api.staging.example.com"
+environments:                   # profiles — sparse variable overrides
+  staging:                      # each key is a VARIABLE name (see `exposes`),
+    API_URL: "https://api.staging.example.com"   # value overrides local
+    COMM_URL: "https://comm.staging.example.com"
 
 presets: { ... }                # see "Presets" below
 shared_services: { ... }        # see "Shared services" below
 repos: { ... }                  # see "Repos" below
-combos: { ... }                 # named bundles of repos
 ui: { ... }                     # see "UI customization" below
+```
+
+### Environments (profiles)
+
+An environment is a **profile**: a sparse map of `variableName → value`.
+`local` is implicit. A profile only lists the variables whose value
+differs from local. Variables are published by services via
+[`exposes`](#services), and referenced anywhere as `{{var:NAME}}`. Each
+service declares which profiles it offers via `environments: [...]`, and
+you switch a service's active profile from the Environment menu. See
+[Services → publishing & switching URLs](../guide/services#publishing-switching-urls).
+
+```yaml
+environments:
+  staging:
+    API_URL: "https://api.staging.example.com"
+  sandbox:
+    API_URL: "https://api.sandbox.example.com"
 ```
 
 ## Repos
@@ -27,21 +45,20 @@ ui: { ... }                     # see "UI customization" below
 ```yaml
 repos:
   api:
-    alias: api                 # short name shown in the TUI
+    alias: api                 # display label only — never referenced
     default_branch: master     # override global default for this repo
     preset: shared-infra       # apply a preset
     pre_start: nvm use         # one-shot hook before any service runs
+    environments: [local, staging]   # profiles offered to this repo's services
 
     # worktree-time config
     copy: [.env, .env.secrets] # files copied from repo to worktree
-    env_output:                # files to write resolved env into
-      - .env.local
+    databases:                 # named — auto-created per workspace
+      main: "{{branch_safe}}"
+      test: "{{branch_safe}}_test"
     env:                       # env templates (resolved per workspace)
-      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:0}}"
-      API_HOST: "{{url:api}}"
-    databases:                 # auto-created per workspace
-      - "{{branch_safe}}"
-      - "{{branch_safe}}_test"
+      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:main}}"
+      COMM_HOST: "{{var:COMM_URL}}"
     setup:                     # run after worktree exists
       - bundle install
       - bundle exec rake db:migrate
@@ -54,23 +71,53 @@ repos:
       web:
         cmd: bundle exec puma -p $PORT
         port: true
+        exposes: API_URL       # publishes this service's URL as API_URL
       worker:
         cmd: bundle exec sidekiq
 ```
 
 | Field | Description |
 | --- | --- |
-| `alias` | Short label used in the TUI and combos. |
+| `alias` | Display label in the TUI. **Not** referenced by templates — rename freely. |
 | `default_branch` | Override the global default branch for this repo. |
 | `pre_start` | One-shot command run before any service in this repo (e.g. `nvm use`). |
+| `environments` | Profiles offered to this repo's services (default `[local]`). A service can narrow it. |
 | `copy` | Files copied from the source repo into each worktree. |
-| `env_output` | File(s) inside the worktree to write resolved env into. |
-| `env` | Env templates. See [Templates](./templates). |
-| `databases` | Database name templates; auto-created per workspace. |
+| `env` | Env vars to generate. Flat map → `.env.local`, or file-keyed (see below). Uses [templates](./templates). |
+| `databases` | **Named** map (`name: template`); auto-created per workspace. Referenced as `{{db:name}}`. |
 | `setup` | Commands run after worktree creation. |
 | `pre_delete` | Commands run before worktree deletion. |
 | `shortcuts` | Quick commands accessible via `c` in the TUI. |
 | `services` | Named services. See [Services](../guide/services). |
+
+### `env`: one key, three forms
+
+There is no separate `env_output` — the `env` key both holds the
+variables and decides the target file(s):
+
+```yaml
+# 1. Flat → written to .env.local
+env:
+  DATABASE_URL: "postgres://{{conn:postgres}}/{{db:main}}"
+
+# 2. File-keyed → each file gets exactly its own vars
+env:
+  .env.development.local:
+    DATABASE_URL: "postgres://{{conn:postgres}}/{{db:dev}}"
+  .env.test.local:
+    DATABASE_URL: "postgres://{{conn:postgres}}/{{db:test}}"
+
+# 3. File-keyed + shared base ("*" applies to every file)
+env:
+  "*":
+    COMM_HOST: "{{var:COMM_URL}}"
+  .env.development.local:
+    DATABASE_URL: "postgres://{{conn:postgres}}/{{db:dev}}"
+  .env.test.local:
+    DATABASE_URL: "postgres://{{conn:postgres}}/{{db:test}}"
+```
+
+A file-specific value overrides `"*"`.
 
 ## Shared services
 

@@ -12,19 +12,20 @@ Under a repo:
 repos:
   api:
     databases:
-      - "{{branch_safe}}"          # primary DB
-      - "{{branch_safe}}_test"     # separate test DB
+      main: "{{branch_safe}}"          # primary DB
+      test: "{{branch_safe}}_test"     # separate test DB
     env:
-      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:0}}"
-      TEST_DATABASE_URL: "postgres://{{conn:postgres}}/{{db:1}}"
+      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:main}}"
+      TEST_DATABASE_URL: "postgres://{{conn:postgres}}/{{db:test}}"
 ```
 
-`{{db:N}}` resolves to the Nth entry above (session-prefixed), so the
-env vars produced for a workspace on branch `feat/login` look like:
+`{{db:NAME}}` resolves to the named entry above (session-prefixed) — names
+instead of positional indexes, so reordering the map never breaks a
+reference. The env vars produced for a workspace on branch `feat/login`:
 
 ```
-DATABASE_URL=postgres://postgres:postgres@postgres:44800/myproject_feat_login
-TEST_DATABASE_URL=postgres://postgres:postgres@postgres:44800/myproject_feat_login_test
+DATABASE_URL=postgres://postgres:postgres@localhost:44800/myproject_feat_login
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:44800/myproject_feat_login_test
 ```
 
 ## Shared service credentials

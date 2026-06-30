@@ -22,14 +22,16 @@ repos:
   api:
     default_branch: master
     preset: shared-infra
-    databases: ["{{branch_safe}}"]
+    databases:
+      main: "{{branch_safe}}"
     env:
-      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:0}}"
+      DATABASE_URL: "postgres://{{conn:postgres}}/{{db:main}}"
     setup: [bundle install, bundle exec rake db:migrate]
     services:
       web:
         cmd: bundle exec puma -p $PORT
         port: true
+        exposes: API_URL        # other repos reference it as {{var:API_URL}}
 ```
 
 ## 2. First-time setup
