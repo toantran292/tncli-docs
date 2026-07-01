@@ -13,8 +13,8 @@ local_pm: pnpm                  # when "pnpm", rewrite npm/yarn installs to pnpm
 
 environments:                   # profiles — sparse variable overrides
   staging:                      # each key is a VARIABLE name (see `exposes`),
-    API_URL: "https://api.staging.example.com"   # value overrides local
-    WEB_URL: "https://web.staging.example.com"
+    API_URL: "https://api.acme.dev"    # value overrides local
+    WEB_URL: "https://web.acme.dev"
 
 presets: { ... }                # see "Presets" below
 shared_services: { ... }        # see "Shared services" below
@@ -35,9 +35,9 @@ you switch a service's active profile from the Environment menu. See
 ```yaml
 environments:
   staging:
-    API_URL: "https://api.staging.example.com"
-  sandbox:
-    API_URL: "https://api.sandbox.example.com"
+    API_URL: "https://api.acme.dev"
+  prod:
+    API_URL: "https://api.acme.io"
 ```
 
 ## Repos

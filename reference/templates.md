@@ -51,7 +51,7 @@ repo, or service never breaks consumers. Profiles override the value:
 ```yaml
 environments:
   staging:
-    API_URL: "https://api.staging.example.com"
+    API_URL: "https://api.acme.dev"
 ```
 
 When a service's active profile is `staging`, `{{var:API_URL}}` resolves
