@@ -47,8 +47,7 @@ export default defineConfig({
           items: [
             { text: 'Workspace lifecycle', link: '/guide/workspace' },
             { text: 'Services', link: '/guide/services' },
-            { text: 'Databases', link: '/guide/databases' },
-            { text: 'TUI shortcuts', link: '/guide/tui' }
+            { text: 'Databases', link: '/guide/databases' }
           ]
         }
       ],

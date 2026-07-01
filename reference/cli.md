@@ -1,13 +1,16 @@
 # CLI commands
 
-`tncli` is a single binary. With no args it launches the **web companion**;
-the terminal UI and everything else are subcommands.
+`tncli` is a single binary. With no args it launches the **web
+companion** — an HTTP + WebSocket server that serves a browser UI and
+mirrors your tmux panes with xterm.js. Everything else is a subcommand.
 
 ```bash
 tncli                          # launch the web companion (default)
-tncli cli                      # open the terminal UI (TUI)
-tncli web --host 0.0.0.0 --port 8765   # web with explicit bind
+tncli web --host 0.0.0.0 --port 8765   # web companion with explicit bind
 ```
+
+By default the server binds `0.0.0.0:8765`, so it's reachable from other
+devices on your LAN. Use `--host 127.0.0.1` to keep it local-only.
 
 ## Project lifecycle
 
@@ -55,23 +58,29 @@ tncli db clean --dry-run       # preview without acting
 
 See [Databases](../guide/databases).
 
-## UI
+## Web companion
 
 ```bash
-tncli                          # launch the web companion (default surface)
-tncli cli                      # open the terminal UI (TUI); alias: tncli ui
-tncli web [--host H] [--port P]  # web companion with explicit bind
-tncli widget <name>            # run a single widget standalone
-                               #   names: status-bar, service-info, …
+tncli                          # launch the web companion (default)
+tncli web [--host H] [--port P]  # explicit bind (default 0.0.0.0:8765)
 ```
 
-`tncli widget` is normally invoked from `ui.layout.panes[].command` so
-each widget runs in its own tmux pane.
+The web companion serves a browser dashboard: manage services, watch
+live logs, and shell into any tmux pane via xterm.js. It attaches to the
+service tmux session over WebSocket, so state survives closing the
+browser tab.
+
+## Run & inspect
+
+```bash
+tncli run <service> <cmd...>   # run a one-off command in a service's env
+tncli disk                     # report disk usage of worktrees + volumes
+tncli agent                    # AI code-agent integration
+```
 
 ## Misc
 
 ```bash
 tncli version
-tncli help <command>
 tncli completion <shell>       # shell completion: bash | zsh | fish
 ```

@@ -53,12 +53,9 @@ Creates `workspace--feature-x/api/` as a git worktree on branch `feature-x`, run
 ## 4. Open the dashboard
 
 ```bash
-tncli            # launches the web companion at http://127.0.0.1:8765
-tncli cli        # or the terminal UI (TUI)
+tncli            # launches the web dashboard at http://127.0.0.1:8765
 ```
 
-In the TUI: navigate with `j/k`, start a service with `s`, stop with `x`,
-`?` for the keymap. The web companion mirrors the same services and logs
-in the browser.
-
-See [TUI shortcuts](./tui) for the full keymap.
+Open that URL in your browser. From the dashboard you can start and stop
+services, watch live logs, and shell into any tmux pane — all backed by
+the service tmux session over WebSocket.

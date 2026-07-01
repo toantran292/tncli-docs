@@ -9,7 +9,7 @@ shape:
 ---
 name: fix-failing-test
 description: Find the closest failing test and propose a one-shot fix.
-trigger: tui          # how the TUI exposes it (tui | cli | both)
+trigger: web          # how tncli exposes it (web | cli | both)
 ---
 
 # Instructions

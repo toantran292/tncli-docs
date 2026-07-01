@@ -64,7 +64,7 @@ repos:
       - bundle exec rake db:migrate
 
     # runtime
-    shortcuts:                 # accessible via `c` key in TUI
+    shortcuts:                 # quick commands surfaced in the web UI
       - cmd: bundle install
         desc: Install deps
     services:
@@ -78,7 +78,7 @@ repos:
 
 | Field | Description |
 | --- | --- |
-| `alias` | Display label in the TUI. **Not** referenced by templates — rename freely. |
+| `alias` | Display label in the web UI. **Not** referenced by templates — rename freely. |
 | `default_branch` | Override the global default branch for this repo. |
 | `pre_start` | One-shot command run before any service in this repo (e.g. `nvm use`). |
 | `environments` | Profiles offered to this repo's services (default `[local]`). A service can narrow it. |
@@ -87,7 +87,7 @@ repos:
 | `databases` | **Named** map (`name: template`); auto-created per workspace. Referenced as `{{db:name}}`. |
 | `setup` | Commands run after worktree creation. |
 | `pre_delete` | Commands run before worktree deletion. |
-| `shortcuts` | Quick commands accessible via `c` in the TUI. |
+| `shortcuts` | Quick commands surfaced in the web UI. |
 | `services` | Named services. See [Services](../guide/services). |
 
 ### `env`: one key, three forms
@@ -170,28 +170,18 @@ presets can be applied via a list: `preset: [shared-infra, prisma]`.
 
 ## UI customization
 
-Optional cosmetic block. See [TUI customization](../guide/tui) for the
-full block; here's the schema:
+Optional cosmetic block for the web dashboard:
 
 ```yaml
 ui:
-  sidebar:
-    width: "25%"               # left tree width: "25%", "30", "30c"
   theme:
-    border: rounded            # rounded | sharp
     colors:
-      primary: "6"
-      accent: "14"
-      muted: "8"
+      primary: "#6"
+      accent: "#14"
+      muted: "#8"
     glyphs:
       running: "●"
       thinking: "✻"
-  layout:
-    panes:
-      - id: status-bar
-        title: " status "      # tmux pane border title (space = no title)
-        command: tncli widget status-bar
-        side: bottom           # top | bottom | left | right
-        size: "1"
-        full_window: true
 ```
+
+All keys are optional; omit the block entirely to use the defaults.

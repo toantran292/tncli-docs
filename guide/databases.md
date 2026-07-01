@@ -46,8 +46,8 @@ shared_services:
 
 ## Manage
 
-From the TUI: press `B` on a workspace row to open the database menu —
-create, drop, or reset all databases for that workspace at once.
+From the web UI: open the database menu on a workspace row to create,
+drop, or reset all databases for that workspace at once.
 
 From the CLI:
 

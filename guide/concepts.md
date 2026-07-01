@@ -68,17 +68,17 @@ combos:
 
 ## Session
 
-tncli runs everything inside two tmux sessions:
+tncli runs your services inside a tmux **service session**
+(`tncli_<project>`) that holds one window per running service. It
+survives closing the browser or killing `tncli` — reconnect and the
+windows are still there.
 
-- `tncli_<project>`: the **service session** holding one window per
-  running service. Survives detaching from the TUI or closing the browser.
-- When you run `tncli cli`, the current tmux session hosts the **TUI
-  window**, split into the tree pane, the log pane, and any widget panes
-  you configured under `ui.layout`. The web companion (bare `tncli`)
-  attaches to the same service session over WebSocket instead.
+The web companion (bare `tncli`) attaches to that service session over
+WebSocket and mirrors each pane in the browser with xterm.js, so you can
+read logs and shell in without leaving the dashboard.
 
 ## Pipeline
 
 Workspace creation and deletion run as a multi-stage **pipeline**, with
-parallelizable per-repo stages. The TUI surfaces progress live; the CLI
-streams the same events. See [Workspace lifecycle](./workspace).
+parallelizable per-repo stages. The web dashboard surfaces progress
+live; the CLI streams the same events. See [Workspace lifecycle](./workspace).

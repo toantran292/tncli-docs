@@ -4,7 +4,7 @@ layout: home
 hero:
   name: tncli
   text: Workspace + service manager
-  tagline: tmux · Docker · Git worktrees · all in one TUI
+  tagline: tmux · Docker · Git worktrees · in your browser
   actions:
     - theme: brand
       text: Get Started
@@ -16,8 +16,8 @@ hero:
 features:
   - title: Multi-workspace
     details: Spawn isolated git worktrees per branch, each with its own services and databases.
-  - title: tmux-native TUI
-    details: Manage services with vim-like keys. Live logs, mouse-aware navigation, instant shell-in-popup.
+  - title: Browser dashboard
+    details: Manage services, watch live logs, and shell into any tmux pane over xterm.js — all from your browser.
   - title: Shared infra
     details: Postgres, Redis, MinIO, OpenSearch shared across workspaces with dynamic port allocation.
   - title: Skill-driven

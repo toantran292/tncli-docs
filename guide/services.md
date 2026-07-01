@@ -2,7 +2,7 @@
 
 Each long-running process — a web server, a worker, a shell — is a
 **service**. Services live in their own tmux windows so logs persist
-and you can re-attach across TUI restarts.
+and you can re-attach across restarts.
 
 ## Declare
 
@@ -31,7 +31,7 @@ repos:
 | `env` | Extra env vars merged over repo-level env. Templates allowed. |
 | `pre_start` | One-shot command run after `cd` but before `cmd` (e.g. `nvm use`). |
 | `dir` | Subdirectory inside the worktree to `cd` into. |
-| `mode` + `modes` | Two-state toggle (e.g. `dev` vs `build`). Switch with `m` in the TUI. |
+| `mode` + `modes` | Two-state toggle (e.g. `dev` vs `build`). Switch from the web UI or `tncli restart`. |
 
 ## Publishing & switching URLs
 
@@ -61,9 +61,9 @@ under the top-level [`environments`](../reference/config#environments-profiles).
 
 ## Start / stop
 
-From the TUI: `s` starts the row under the cursor, `x` stops it. Both
-work on services, repos (all services in that repo), or whole
-workspaces. `X` stops everything in the project.
+From the web UI: use the start/stop controls on any row. They work on
+services, repos (all services in that repo), or whole workspaces, and
+there's a control to stop everything in the project.
 
 From the CLI:
 
@@ -76,10 +76,9 @@ tncli status                  # list running services with PIDs
 
 ## Logs
 
-The right pane in the TUI mirrors the selected service's tmux window
-live. Scroll with `j/k`, jump to top/bottom with `g/G`, search with `/`.
-Press `i` to forward keys into the service (interactive REPL); `y` for
-copy mode.
+In the web UI, selecting a service opens its tmux window live in an
+xterm.js terminal — scroll and search the buffer, or type straight into
+the service for an interactive REPL.
 
 From the CLI:
 
@@ -106,8 +105,8 @@ services:
     port: true
 ```
 
-Press `m` on the service in the TUI to flip between modes. The active
-mode persists across restarts.
+Flip between modes from the web UI; the active mode persists across
+restarts.
 
 ## Pre-start hooks
 
