@@ -14,7 +14,7 @@ local_pm: pnpm                  # when "pnpm", rewrite npm/yarn installs to pnpm
 environments:                   # profiles — sparse variable overrides
   staging:                      # each key is a VARIABLE name (see `exposes`),
     API_URL: "https://api.staging.example.com"   # value overrides local
-    COMM_URL: "https://comm.staging.example.com"
+    WEB_URL: "https://web.staging.example.com"
 
 presets: { ... }                # see "Presets" below
 shared_services: { ... }        # see "Shared services" below
@@ -58,7 +58,7 @@ repos:
       test: "{{branch_safe}}_test"
     env:                       # env templates (resolved per workspace)
       DATABASE_URL: "postgres://{{conn:postgres}}/{{db:main}}"
-      COMM_HOST: "{{var:COMM_URL}}"
+      WEB_HOST: "{{var:WEB_URL}}"
     setup:                     # run after worktree exists
       - bundle install
       - bundle exec rake db:migrate
@@ -110,7 +110,7 @@ env:
 # 3. File-keyed + shared base ("*" applies to every file)
 env:
   "*":
-    COMM_HOST: "{{var:COMM_URL}}"
+    WEB_HOST: "{{var:WEB_URL}}"
   .env.development.local:
     DATABASE_URL: "postgres://{{conn:postgres}}/{{db:dev}}"
   .env.test.local:
