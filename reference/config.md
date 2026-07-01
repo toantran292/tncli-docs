@@ -19,7 +19,7 @@ environments:                   # profiles — sparse variable overrides
 presets: { ... }                # see "Presets" below
 shared_services: { ... }        # see "Shared services" below
 repos: { ... }                  # see "Repos" below
-ui: { ... }                     # see "UI customization" below
+ui: { editor: cursor }          # see "UI" below
 ```
 
 ### Environments (profiles)
@@ -168,20 +168,14 @@ presets:
 A repo with `preset: shared-infra` inherits those fields. Multiple
 presets can be applied via a list: `preset: [shared-infra, prisma]`.
 
-## UI customization
+## UI
 
-Optional cosmetic block for the web dashboard:
+Optional. The only setting is the editor launched by "Open in editor":
 
 ```yaml
 ui:
-  theme:
-    colors:
-      primary: "#6"
-      accent: "#14"
-      muted: "#8"
-    glyphs:
-      running: "●"
-      thinking: "✻"
+  editor: cursor                # code | cursor | zed | nvim | … ; overrides $EDITOR
 ```
 
-All keys are optional; omit the block entirely to use the defaults.
+Theme (dark / light / sepia) and language are chosen in the web dashboard,
+not in config.
