@@ -80,8 +80,8 @@ persisted so a service keeps the same port across restarts.
   that you must stop a running session before starting another, and
   starting a port-consuming service in a session with no free slot is
   hard-blocked (rather than binding against a bogus slot and dying).
-  Agent windows (Claude Code) and terminal-editor windows take no port, so
-  they never occupy a slot or keep an idle session from releasing one.
+  Agent windows (Claude Code) take no port, so they never occupy a slot or
+  keep an idle session from releasing one.
 
 All reads and writes go through a **file lock** (`WithProjectLock`), so
 concurrent workspace operations can't corrupt the map with a

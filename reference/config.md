@@ -174,7 +174,7 @@ Optional. The only setting is the editor launched by "Open in editor":
 
 ```yaml
 ui:
-  editor: cursor                # code | cursor | zed | nvim | … ; overrides $EDITOR
+  editor: cursor                # GUI editor only: code | cursor | zed | windsurf | subl
 ```
 
 Theme (dark / light / sepia) and language are chosen in the web dashboard,
