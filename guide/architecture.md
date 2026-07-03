@@ -1,0 +1,203 @@
+# Architecture
+
+How tncli is built, and the techniques it uses to stay fast and correct.
+This page is the "how it actually works" companion to
+[Concepts](./concepts) — read that first for the vocabulary.
+
+## One binary, two front-ends
+
+tncli ships as a **single Go binary** with no runtime dependencies beyond
+`tmux`, `git`, and (optionally) `docker`. It exposes the same core two
+ways:
+
+- **CLI** — `tncli <command>` for scripting and one-off actions.
+- **Web dashboard** — bare `tncli` starts an HTTP + WebSocket server and
+  opens a browser UI. The React/Vite frontend is compiled and embedded
+  into the binary with `go:embed`, so there is nothing separate to serve
+  or deploy.
+
+Both front-ends call the same internal packages, so behaviour never
+drifts between them:
+
+```
+CLI       cmd/tncli/*.go  ─┐
+                           ├─▶  internal/services  ─▶  internal/tmux  ─▶  tmux
+Web       internal/web    ─┘        (all side effects)          (subprocess)
+                           └─▶  internal/pipeline (workspace lifecycle)
+```
+
+The web server is **stateless per request**: every panel reads live state
+from `/api/*` and terminals stream over `/ws`. There is no server-side
+session store to get out of sync with what tmux and git actually hold.
+
+## Workspaces are git worktrees
+
+A workspace is not a copy — it is one **git worktree per repo**, checked
+out on the workspace's branch, living under `workspace--<branch>/`.
+Worktrees share the object store with the main clone, so creating a
+workspace is cheap in disk and instant to switch. Each workspace gets its
+own env files, database names, and port block, so any number can run at
+once without collision.
+
+::: tip Workspace branch vs git branch
+The folder name (`workspace--<branch>`) is the source of truth for env
+resolution, hostnames, and database names — even if the underlying git
+branch was later renamed. This keeps a workspace's identity stable.
+:::
+
+## Port management
+
+Ports are the classic source of "works on my machine" collisions. tncli
+removes the guesswork with a **deterministic, layered allocation** that is
+persisted so a service keeps the same port across restarts.
+
+- **The pool** is divided into fixed-size **blocks** (100 ports each). A
+  workspace leases one block; every `port: true` service in that
+  workspace draws a stable offset inside it.
+- **Stable indices** live in `.tncli/network.json` per project:
+
+  ```json
+  {
+    "slot": 0,
+    "blocks":      { "ws-feature-x": 3 },
+    "service_map": { "api/web": 1, "api/worker": 2 },
+    "shared_map":  { "redis": 0, "postgres": 1 }
+  }
+  ```
+
+  `blocks` maps a workspace to its port block; `service_map` fixes each
+  service's offset within the block; `shared_map` fixes each shared
+  service's offset from the shared base. Because the maps are persisted,
+  ports are **reproducible** — restart a service and it lands on the same
+  port every time.
+- **Session slots** (`~/.tncli/slots.json`) lease a global slot per
+  running session so two projects on the same machine never overlap.
+
+All reads and writes go through a **file lock** (`WithProjectLock`), so
+concurrent workspace operations can't corrupt the map with a
+read-modify-write race.
+
+Templates surface the resolved values so config never hardcodes a port:
+
+```yaml
+env:
+  PORT: "{{port:web}}"          # this service's allocated port
+  REDIS_URL: "{{conn:redis}}"   # user:pass@host:port for a shared service
+```
+
+## Service management
+
+Each service runs as **one tmux window** inside the project's service
+session (`tncli_<project>`). That gives you persistent, recoverable logs
+for free — close the browser or kill `tncli` and the windows keep
+running; reconnect and they're still there.
+
+- Services launch through `zsh -ic` (an **interactive** shell) so your
+  `.zshrc` is sourced and version managers like `nvm`/`rvm` resolve the
+  right toolchain — the single most common cause of "runs in my terminal
+  but not under a task runner".
+- A `pre_start` hook runs **after** the `cd` into the worktree but
+  **before** the service command, for per-run setup.
+- Long-running services wrap so the pane lingers on exit (you can read the
+  crash), while one-shot commands auto-close. Dead panes are reaped by a
+  background collector so a crashed service doesn't leak tmux windows.
+
+### When env files are (re)generated
+
+Env files are written from the resolved `env:` block at three moments,
+and only then, so they always reflect current config without a manual
+step:
+
+1. Workspace **create**.
+2. Service **start** (picks up config edits before the process launches).
+3. Env-profile **switch**.
+
+## Shared services
+
+Shared services (Postgres, Redis, MinIO, OpenSearch, …) are containers
+declared under `shared_services:` and started with a generated
+**docker-compose override**. One set of containers backs every workspace;
+isolation happens at the *data* layer, not by running N copies.
+
+- **Capacity-based slots.** A service with a `capacity:` (for example, the
+  16 logical Redis databases) hands each workspace a distinct slot index
+  via `{{slot:NAME}}`, so workspaces share one Redis process but never
+  collide on a DB index. Allocations live in `~/.tncli/shared_slots.json`
+  behind a slot lock (`withSlotLock`).
+- **Start-on-demand dependency.** Starting a repo service first ensures
+  its shared services are up (`docker compose up -d`) — you don't have to
+  remember to boot infra first.
+- **Dynamic ports.** Shared services publish on allocated ports surfaced
+  through `{{host:NAME}}`, `{{port:NAME}}`, and `{{conn:NAME}}`, so two
+  projects can each run their own Postgres without a port clash.
+
+## Config templates, validated at load
+
+Environment switching uses **one** mechanism — `{{var:NAME}}`. A service
+*publishes* a variable with `exposes:` (its local URL becomes the local
+value); an `environments:<profile>` block supplies sparse remote
+overrides under the same name. Every reference is checked when the config
+loads, so a typo or renamed alias **fails loudly at startup** instead of
+silently breaking a URL at runtime.
+
+| Template | Resolves to |
+| --- | --- |
+| `{{var:NAME}}` | switchable value — local publisher URL or the active profile's override |
+| `{{var:NAME \| ws}}` | same value, `http→ws` / `https→wss` |
+| `{{host:name}}` / `{{port:name}}` | shared-service host / port |
+| `{{conn:name}}` | `user:pass@host:port` for a shared service |
+| `{{db:name}}` | named, session-prefixed, branch-resolved database |
+| `{{slot:name}}` | capacity slot index for this workspace |
+| `{{branch_safe}}` | workspace branch with `/` and `-` → `_` |
+
+See [Templates](../reference/templates) for the full list.
+
+## The lifecycle pipeline
+
+Creating and deleting a workspace runs as a **staged pipeline**. Per-repo
+work (clone the worktree, run setup, write env, create databases) runs in
+**parallel stages** with a `sync.WaitGroup`, and errors are collected
+rather than aborting the whole run on the first failure.
+
+Progress is emitted as `Event` structs over a channel. The CLI prints
+them; the web dashboard streams the same events over
+`/ws/workspace/{create,delete}` and renders an inline progress bar on the
+workspace card. One source of truth, two renderings.
+
+## What keeps the dashboard fast
+
+The web layer is tuned so a busy project with many workspaces and repos
+stays responsive:
+
+- **Realtime agent state over SSE.** Claude/agent state (idle, working,
+  awaiting input) is pushed to the browser over Server-Sent Events, so
+  notifications are instant instead of polled.
+- **Batched PR fetch.** Pull-request status for every repo is fetched in
+  **one GraphQL request** (aliasing each repo) rather than one `gh` call
+  per repo — one process, one round-trip, one rate-limit hit. Results are
+  cached, served stale while refreshing, and warmed in the background so
+  the UI never blocks on GitHub. A cold cache is warmed synchronously so
+  badges appear on first paint.
+- **GPU rendering, only where it counts.** Each terminal uses xterm.js;
+  the WebGL renderer (the dominant memory cost) is attached **only to the
+  visible tab**. Panes stream from tmux over a `pipe-pane` FIFO.
+- **Flat memory across tabs.** Only the active terminal tab plus a small
+  most-recently-used window stays mounted; the rest unmount and free their
+  xterm + socket. tmux holds the real pane state, so re-selecting a
+  suspended tab remounts and resyncs from a fresh `capture-pane` snapshot.
+  Memory stays roughly constant no matter how many tabs you open.
+- **Polite polling.** Polling pauses when the browser tab is hidden and is
+  scoped and batched (one endpoint over many) to avoid request storms.
+
+## Concurrency & safety
+
+- **File locks for shared state** — `WithProjectLock` guards
+  `network.json`; `withSlotLock` guards `shared_slots.json`. No
+  read-modify-write happens without a lock.
+- **`exec.Command`, never a shell string** — arguments are passed as
+  separate strings, so branch names and paths can't be interpolated into a
+  shell. Where a multi-command pipeline is unavoidable, inputs are
+  sanitized (`BranchSafe`) first.
+- **`sudo` is confined to `tncli setup`.** Every runtime command —
+  `start`, `workspace create`, `proxy` — runs without elevated
+  privileges.

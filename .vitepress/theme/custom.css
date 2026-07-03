@@ -1,0 +1,99 @@
+/*
+ * tncli docs theme — mirrors the dashboard's color language so the docs
+ * and the app read as one product. Palette lifted verbatim from the web
+ * UI's semantic CSS variables (web-ui/src/styles.css): near-black glass
+ * background, a light-blue accent that fades into the workspace purple,
+ * and the same ok/warn/danger triad.
+ */
+
+:root {
+  /* Brand = the app accent blue. */
+  --vp-c-brand-1: #3a8fe0;
+  --vp-c-brand-2: #2f7fd6;
+  --vp-c-brand-3: #1565c0;
+  --vp-c-brand-soft: rgba(47, 127, 214, 0.12);
+
+  --vp-c-tip-1: var(--vp-c-brand-1);
+  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  --vp-c-note-1: var(--vp-c-brand-1);
+
+  /* State colors — same triad as the dashboard. */
+  --vp-c-success-1: #2e9d62;
+  --vp-c-success-soft: rgba(46, 157, 98, 0.13);
+  --vp-c-warning-1: #c4761b;
+  --vp-c-warning-soft: rgba(196, 118, 27, 0.10);
+  --vp-c-danger-1: #d83a3a;
+  --vp-c-danger-soft: rgba(216, 58, 58, 0.10);
+
+  /* Hero wordmark: blue → workspace purple, the app's identity gradient. */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #2f7fd6 20%, #8657d2);
+
+  --vp-code-tab-active-bar-color: var(--vp-c-brand-1);
+  --tncli-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* ── Dark = the dashboard's default look ─────────────────────────────── */
+.dark {
+  --vp-c-bg: #090b0e;
+  --vp-c-bg-alt: #0c0f13;
+  --vp-c-bg-elv: #12151b;
+  --vp-c-bg-soft: #12151b;
+
+  --vp-c-border: rgba(255, 255, 255, 0.09);
+  --vp-c-divider: rgba(255, 255, 255, 0.06);
+  --vp-c-gutter: #05070a;
+
+  --vp-c-text-1: #e9edf2;
+  --vp-c-text-2: #9aa3ad;
+  --vp-c-text-3: #6b7480;
+
+  /* Accent brightens in dark to match the app's #7fc8ff. */
+  --vp-c-brand-1: #7fc8ff;
+  --vp-c-brand-2: #a9d6ff;
+  --vp-c-brand-3: #5aa9ef;
+  --vp-c-brand-soft: rgba(124, 200, 255, 0.12);
+
+  --vp-c-success-1: #30d158;
+  --vp-c-success-soft: rgba(48, 209, 88, 0.13);
+  --vp-c-warning-1: #ff9f0a;
+  --vp-c-warning-soft: rgba(255, 159, 10, 0.13);
+  --vp-c-danger-1: #ff453a;
+  --vp-c-danger-soft: rgba(255, 69, 58, 0.13);
+
+  --vp-home-hero-name-background: linear-gradient(120deg, #7fc8ff 20%, #c8aaff);
+
+  /* Brand button: dark text on the light-blue accent, like the app. */
+  --vp-button-brand-text: #06121f;
+  --vp-button-brand-hover-text: #06121f;
+  --vp-button-brand-active-text: #06121f;
+  --vp-button-brand-bg: #7fc8ff;
+  --vp-button-brand-hover-bg: #a9d6ff;
+  --vp-button-brand-border: transparent;
+
+  --vp-code-block-bg: #0a0c10;
+}
+
+/* Subtle glass on the nav bar, like the dashboard topbar. */
+.dark .VPNav {
+  backdrop-filter: saturate(1.2) blur(12px);
+}
+
+/* Monospace everywhere code shows — matches the terminal font in-app. */
+:root {
+  --vp-font-family-mono: var(--tncli-mono);
+}
+
+/* Inline template tokens ({{var:NAME}} etc.) read as accents, not noise. */
+.vp-doc :not(pre) > code {
+  font-size: 0.85em;
+}
+
+/* Tighten the feature cards on the home page toward the app's card feel. */
+.dark .VPFeature {
+  background: #0f1319;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+.dark .VPFeature:hover {
+  border-color: rgba(124, 200, 255, 0.26);
+}
