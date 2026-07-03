@@ -1,0 +1,78 @@
+# FAQ & troubleshooting
+
+Answers to the questions that come up most — especially the non-obvious
+ones. If something here is out of date, please open an issue.
+
+## A service starts fine in my terminal but fails under tncli
+
+Services run via `zsh -ic` (an **interactive** shell) so your `~/.zshrc`
+is sourced and version managers (nvm, rvm, asdf) resolve the right
+toolchain. If a service still can't find a binary, make sure the tool is
+set up in your `.zshrc` (not only `.zprofile`/`.bash_profile`), or put the
+setup in the service's `pre_start` hook. `pre_start` runs after the `cd`
+into the worktree and before the command.
+
+## PR badges / checks don't show up
+
+- Run `gh auth login` once — PR data comes from the GitHub CLI's token.
+- The repo needs a GitHub `origin` remote. **SSH host aliases work**
+  (e.g. `git@myalias:owner/repo` from your `~/.ssh/config`) — tncli reads
+  `owner/repo` from any URL form.
+- A workspace shows **no PR pill** when its branch simply has no open PR.
+  It's fetched by exact branch, so it won't miss one that exists.
+
+## Where is "Delete workspace"?
+
+Right-click a workspace card in the sidebar → **Delete workspace…**. It's
+offered on branch workspaces only — **main** is the pinned project home
+and can't be deleted (it has **Pull latest** instead). Right-click also
+has **Add repos…** and **Reset databases…**.
+
+## Copy from a terminal doesn't work (or copies the wrong thing)
+
+- Select with click-drag, then **⌘C** (macOS) or **Ctrl+Shift+C**
+  (Linux/Windows). Plain **Ctrl+C** is left for the app (interrupt /
+  Claude's cancel).
+- Over a **LAN IP** (`http://192.168.x.x:…`) the browser blocks the
+  Clipboard API; tncli falls back automatically, but for full clipboard
+  access open the dashboard on **`localhost`**.
+- Right-click → **Copy** works too, and keeps your selection.
+
+## Scrolling / selecting inside a Claude tab feels off
+
+Claude's fullscreen TUI captures the mouse. Drag-to-select is handled for
+you (a drag becomes a real terminal selection, a plain click still reaches
+Claude), and the wheel scrolls Claude's view. If a selection vanishes as
+Claude repaints, it's preserved for Copy/⌘C anyway.
+
+## Two services grabbed the same port / ports keep changing
+
+They shouldn't — each workspace leases a fixed 100-port block and each
+service a stable offset, persisted in `.tncli/network.json`. Ports are
+**reproducible** across restarts. See
+[Architecture › Port management](./architecture#port-management).
+
+## Shared services (Postgres/Redis/…) aren't running
+
+They need **docker**. You don't have to start them manually — starting a
+repo service first brings its shared dependencies up. Check
+`docker ps`, and that Docker is running.
+
+## When are `.env` files (re)written?
+
+On three events, and only then: **workspace create**, **service start**
+(picks up config edits before launch), and an **env-profile switch**. So
+edit config, then start — the env reflects it.
+
+## Can I run tncli from any directory?
+
+Yes. Bare `tncli` opens the dashboard; it finds `tncli.yml` by walking up
+from the current directory, and otherwise falls back to your current
+session. Creating a new session (sidebar) accepts a **local path** or a
+**git URL** for each repo.
+
+## How do I attach to a pane from my own terminal?
+
+Right-click a terminal → **Copy tmux attach command**, then paste it in a
+terminal. The tmux service session (`tncli_<project>`) survives closing
+the browser, so you can reconnect any time.

@@ -50,6 +50,12 @@ export default defineConfig({
             { text: 'Services', link: '/guide/services' },
             { text: 'Databases', link: '/guide/databases' }
           ]
+        },
+        {
+          text: 'Help',
+          items: [
+            { text: 'FAQ & troubleshooting', link: '/guide/faq' }
+          ]
         }
       ],
       '/reference/': [
