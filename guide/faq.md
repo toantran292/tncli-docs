@@ -3,6 +3,18 @@
 Answers to the questions that come up most — especially the non-obvious
 ones. If something here is out of date, please open an issue.
 
+## What if a dependency is missing?
+
+The dashboard runs a preflight check and shows a banner under the topbar:
+
+- **Required tool missing** (`git`, `tmux`, `zsh`) → a red banner — tncli
+  can't work without them.
+- **Optional tool missing** (`gh`, `claude`, `docker`) → a dismissible
+  warning naming the feature it gates (PR status, agent tabs, shared
+  services), so those features stay off until you install it.
+
+Both link to the install steps above. See [Dependencies](#dependencies).
+
 ## A service starts fine in my terminal but fails under tncli
 
 Services run via `zsh -ic` (an **interactive** shell) so your `~/.zshrc`
