@@ -172,12 +172,14 @@ stays responsive:
 - **Realtime agent state over SSE.** Claude/agent state (idle, working,
   awaiting input) is pushed to the browser over Server-Sent Events, so
   notifications are instant instead of polled.
-- **Batched PR fetch.** Pull-request status for every repo is fetched in
-  **one GraphQL request** (aliasing each repo) rather than one `gh` call
-  per repo — one process, one round-trip, one rate-limit hit. Results are
-  cached, served stale while refreshing, and warmed in the background so
-  the UI never blocks on GitHub. A cold cache is warmed synchronously so
-  badges appear on first paint.
+- **Batched PR fetch.** Pull-request status is fetched by **exact head
+  branch** — one aliased GraphQL query per on-screen (repo, branch),
+  batched into a few requests — rather than one `gh` call per repo. This
+  is both complete (a branch resolves no matter how many open PRs its repo
+  has) and minimal (only the branches on screen are fetched). Results are
+  cached per (repo, branch), served stale while refreshing, and warmed in
+  the background so the UI never blocks on GitHub; a cold cache is warmed
+  synchronously so badges appear on first paint.
 - **GPU rendering, only where it counts.** Each terminal uses xterm.js;
   the WebGL renderer (the dominant memory cost) is attached **only to the
   visible tab**. Panes stream from tmux over a `pipe-pane` FIFO.
