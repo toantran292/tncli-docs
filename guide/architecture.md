@@ -70,18 +70,21 @@ persisted so a service keeps the same port across restarts.
   service's offset from the shared base. Because the maps are persisted,
   ports are **reproducible** — restart a service and it lands on the same
   port every time.
-- **Session slots** (`~/.tncli/slots.json`) lease a global slot per
-  running session so two projects on the same machine never overlap. The
-  pool divides into `max_sessions` equal slots (subnet-style), one per
-  concurrently-running session — configurable in Settings › **tncli
-  (global) › Sessions & slots** (`~/.tncli/config.json`, machine-wide, not
-  per-session); slot size and workspaces-per-session are
-  derived from it. When every slot is leased, the session switcher warns
-  that you must stop a running session before starting another, and
-  starting a port-consuming service in a session with no free slot is
-  hard-blocked (rather than binding against a bogus slot and dying).
-  Agent windows (Claude Code) take no port, so they never occupy a slot or
-  keep an idle session from releasing one.
+- **Session slots** (`~/.tncli/slots.json`) assign a global slot per
+  session so two sessions on the same machine never overlap on ports. The
+  pool divides into `max_sessions` equal slots (subnet-style) —
+  configurable in Settings › **tncli (global) › Sessions & slots**
+  (`~/.tncli/config.json`, machine-wide, not per-session); slot size and
+  workspaces-per-session are derived from it. A session is assigned its
+  slot **the first time it starts a service** and **keeps it until the
+  session is deleted** — `slots.json` is the single authority for
+  session→slot, so ports stay stable across restarts and can never collide.
+  When every slot is assigned, the session switcher warns and starting a
+  port-consuming service in an unassigned session is hard-blocked (rather
+  than binding against a bogus slot and dying); delete a session to free
+  its slot. Each session runs its own shared-service stack on its slot's
+  ports, generated on demand — so two sessions each get an isolated
+  Postgres/Redis without a port clash.
 
 All reads and writes go through a **file lock** (`WithProjectLock`), so
 concurrent workspace operations can't corrupt the map with a
