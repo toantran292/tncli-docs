@@ -28,6 +28,13 @@ offered on branch workspaces only — **main** is the pinned project home
 and can't be deleted (it has **Pull latest** instead). Right-click also
 has **Add repos…** and **Reset databases…**.
 
+## How do I delete a session?
+
+Open the session switcher (top-left project chip) and **right-click a
+session** → **Remove from list** (unregister, keep the files) or **Delete
+session + files…** (also removes its directory from disk). You can't
+delete the **active** session — switch to another first.
+
 ## Copy from a terminal doesn't work (or copies the wrong thing)
 
 - Select with click-drag, then **⌘C** (macOS) or **Ctrl+Shift+C**
