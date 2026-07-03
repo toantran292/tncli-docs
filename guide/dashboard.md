@@ -42,6 +42,9 @@ Events, not polling). When an agent needs a reply, the topbar shows an
 workspace's Claude tab so you can respond immediately. Optional toasts and
 a notification center record these events.
 
+To control the agent, right-click the **Claude Code** card in the overview
+(or the **Claude** pill in the header) → **Restart** or **Stop**.
+
 ## Reviewing code
 
 The **Code** tab lists files changed on the branch vs its base as a
