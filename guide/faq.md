@@ -28,6 +28,14 @@ offered on branch workspaces only — **main** is the pinned project home
 and can't be deleted (it has **Pull latest** instead). Right-click also
 has **Add repos…** and **Reset databases…**.
 
+## How do I add a repo to the project?
+
+Right-click the **main** workspace → **Add repo (clone from URL)…**, paste
+a git URL (SSH or HTTPS; aliases work). tncli clones it into the main
+workspace, registers it in `tncli.yml`, and reloads — no restart. On a
+**branch** workspace, right-click → **Add repos…** instead adds worktrees
+for repos already declared in the project.
+
 ## How do I delete a session?
 
 Open the session switcher (top-left project chip) and **right-click a
