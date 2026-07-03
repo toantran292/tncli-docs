@@ -143,6 +143,13 @@ isolation happens at the *data* layer, not by running N copies.
 - **Dynamic ports.** Shared services publish on allocated ports surfaced
   through `{{host:NAME}}`, `{{port:NAME}}`, and `{{conn:NAME}}`, so two
   projects can each run their own Postgres without a port clash.
+- **Lifecycle.** Once up, shared containers keep running (they're
+  background infra with `restart: unless-stopped`) — they don't stop when
+  you stop a repo service or delete a workspace. Control them from Settings
+  › **Shared services**: start/stop/restart an individual container, or
+  **Start all / Stop all / Tear down** the whole `<session>-shared` stack.
+  Tear down removes the containers (freeing ports) but keeps the data
+  volumes, so the next start comes back with your data.
 
 ## Config templates, validated at load
 
