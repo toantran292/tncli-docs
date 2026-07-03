@@ -68,8 +68,10 @@ edit config, then start — the env reflects it.
 
 Yes. Bare `tncli` opens the dashboard; it finds `tncli.yml` by walking up
 from the current directory, and otherwise falls back to your current
-session. Creating a new session (sidebar) accepts a **local path** or a
-**git URL** for each repo.
+session. Creating a new session (sidebar) clones each repo from its
+**git URL** (SSH or HTTPS). Note that a clone doesn't bring git-ignored
+files like `.env` — copy those into the workspace afterward if your
+services need them.
 
 ## How do I attach to a pane from my own terminal?
 
