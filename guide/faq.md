@@ -97,8 +97,11 @@ Yes. Bare `tncli` opens the dashboard; it finds `tncli.yml` by walking up
 from the current directory, and otherwise falls back to your current
 session. Creating a new session (sidebar) clones each repo from its
 **git URL** (SSH or HTTPS). A clone doesn't bring git-ignored files like
-`.env`, so add them to the repos in the session's **main workspace before
-creating any new workspace** — new workspaces branch from what's there.
+`.env` — add them right in the create dialog's **Env files** section
+(repeatable `path` + content rows; a monorepo can have several at
+different sub-paths), or add them to the main workspace afterward
+**before creating any new workspace** (new workspaces branch from
+what's there).
 
 ## How do I attach to a pane from my own terminal?
 
