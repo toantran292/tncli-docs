@@ -28,7 +28,6 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/install' },
       { text: 'Reference', link: '/reference/config' },
-      { text: 'Skills', link: '/skills/' },
       { text: 'Releases', link: 'https://github.com/toantran292/tncli-releases/releases' }
     ],
 
@@ -59,15 +58,6 @@ export default defineConfig({
             { text: 'tncli.yml', link: '/reference/config' },
             { text: 'CLI commands', link: '/reference/cli' },
             { text: 'Templates', link: '/reference/templates' }
-          ]
-        }
-      ],
-      '/skills/': [
-        {
-          text: 'Skills',
-          items: [
-            { text: 'Overview', link: '/skills/' },
-            { text: 'Writing skills', link: '/skills/writing' }
           ]
         }
       ]

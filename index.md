@@ -20,6 +20,6 @@ features:
     details: Manage services, watch live logs, and shell into any tmux pane over xterm.js — all from your browser.
   - title: Shared infra
     details: Postgres, Redis, MinIO, OpenSearch shared across workspaces with dynamic port allocation.
-  - title: Skill-driven
-    details: AI skills for common dev pain points — unstuck, migrate-fix, test-fix.
+  - title: Review without leaving
+    details: Browse each branch's diff as a file tree, with PR checks and mergeability pulled straight from GitHub.
 ---
