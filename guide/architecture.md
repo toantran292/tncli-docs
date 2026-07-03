@@ -71,7 +71,12 @@ persisted so a service keeps the same port across restarts.
   ports are **reproducible** — restart a service and it lands on the same
   port every time.
 - **Session slots** (`~/.tncli/slots.json`) lease a global slot per
-  running session so two projects on the same machine never overlap.
+  running session so two projects on the same machine never overlap. The
+  pool divides into `max_sessions` equal slots (subnet-style), one per
+  concurrently-running session — configurable in Settings › Ports
+  (`~/.tncli/config.json`); slot size and workspaces-per-session are
+  derived from it. When every slot is leased, the session switcher warns
+  that you must stop a running session before starting another.
 
 All reads and writes go through a **file lock** (`WithProjectLock`), so
 concurrent workspace operations can't corrupt the map with a
