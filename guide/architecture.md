@@ -191,6 +191,27 @@ stays responsive:
 - **Polite polling.** Polling pauses when the browser tab is hidden and is
   scoped and batched (one endpoint over many) to avoid request storms.
 
+## Frontend design
+
+The dashboard is a React + Vite single-page app (state in Zustand),
+compiled and `go:embed`-ed into the binary. A few principles keep it
+coherent:
+
+- **Semantic theming.** Colors are never hardcoded in components — every
+  surface reads CSS variables driven by a `data-theme` attribute, so the
+  three themes (dark / light / sepia) stay consistent everywhere, down to
+  the diff viewer and PR panels. Adding a theme is one variable block.
+- **Real state, mirrored.** Terminals are live tmux panes over a
+  WebSocket, not logs polled into a buffer; agent state arrives over SSE.
+  The UI reflects what tmux/git/GitHub actually hold, so it can't drift.
+- **Bounded resource use.** WebGL renders only the visible tab; off-screen
+  terminal tabs suspend (see "Flat memory across tabs" above); PR data is
+  fetched by exact head branch and cached. Cost stays flat as workspaces,
+  repos, and tabs grow.
+- **Consistent motion.** One Apple-style easing curve, transform/opacity
+  only (GPU-friendly), with a `prefers-reduced-motion` guard. Menus,
+  popovers, toasts, modals, and press/hover feedback all share it.
+
 ## Concurrency & safety
 
 - **File locks for shared state** — `WithProjectLock` guards

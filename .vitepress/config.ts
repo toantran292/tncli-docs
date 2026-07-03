@@ -39,6 +39,7 @@ export default defineConfig({
             { text: 'Install', link: '/guide/install' },
             { text: 'Quick Start', link: '/guide/quickstart' },
             { text: 'Concepts', link: '/guide/concepts' },
+            { text: 'The dashboard', link: '/guide/dashboard' },
             { text: 'Architecture', link: '/guide/architecture' }
           ]
         },
