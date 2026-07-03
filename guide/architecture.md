@@ -73,8 +73,9 @@ persisted so a service keeps the same port across restarts.
 - **Session slots** (`~/.tncli/slots.json`) lease a global slot per
   running session so two projects on the same machine never overlap. The
   pool divides into `max_sessions` equal slots (subnet-style), one per
-  concurrently-running session — configurable in Settings › Ports
-  (`~/.tncli/config.json`); slot size and workspaces-per-session are
+  concurrently-running session — configurable in Settings › **tncli
+  (global) › Sessions & slots** (`~/.tncli/config.json`, machine-wide, not
+  per-session); slot size and workspaces-per-session are
   derived from it. When every slot is leased, the session switcher warns
   that you must stop a running session before starting another.
 
