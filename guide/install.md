@@ -1,10 +1,67 @@
 # Install
 
-## Requirements
+tncli itself is a single binary, but it drives a few external tools. Make
+sure the ones you need are installed before you start.
 
-- macOS or Linux
-- `tmux`, `git`, `docker`, `zsh`
-- Go 1.26+ (only for building from source)
+## Dependencies
+
+| Tool | Required? | What tncli uses it for |
+| :--- | :--- | :--- |
+| **git** | Required | Per-workspace worktrees. |
+| **tmux** | Required | Every service/agent runs in a tmux window (persistent logs, reconnect). |
+| **zsh** | Required | Services launch via `zsh -ic` so your `.zshrc` (nvm/rvm/etc.) is loaded. |
+| **gh** (GitHub CLI) | For PR features | Auth + the GraphQL calls that power PR status, checks, and mergeability. |
+| **claude** (Claude Code) | For agent tabs | The built-in Claude Code agent each workspace exposes. |
+| **docker** | For shared services | Postgres/Redis/MinIO/OpenSearch containers. Skip it if you run everything natively. |
+| **Go 1.26+** | Building from source only | Not needed if you use a released binary. |
+
+### macOS (Homebrew)
+
+```bash
+brew install git tmux gh          # zsh ships with macOS
+brew install --cask docker        # optional — only for shared services
+npm install -g @anthropic-ai/claude-code   # optional — the Claude agent
+```
+
+### Debian / Ubuntu
+
+```bash
+sudo apt update && sudo apt install -y git tmux zsh
+# GitHub CLI (see cli.github.com for the signed-repo steps):
+sudo apt install -y gh
+# Docker (optional): https://docs.docker.com/engine/install/
+# Claude Code (optional):
+npm install -g @anthropic-ai/claude-code
+```
+
+### Arch
+
+```bash
+sudo pacman -S git tmux zsh github-cli
+# docker (optional): sudo pacman -S docker
+npm install -g @anthropic-ai/claude-code   # optional
+```
+
+Official install pages if a package is missing or you want another method:
+[git](https://git-scm.com/downloads) ·
+[tmux](https://github.com/tmux/tmux/wiki/Installing) ·
+[GitHub CLI](https://cli.github.com/) ·
+[Claude Code](https://code.claude.com/docs) ·
+[Docker](https://docs.docker.com/get-docker/).
+
+### After installing
+
+Authenticate the GitHub CLI once so PR features work:
+
+```bash
+gh auth login
+```
+
+Verify the essentials are on your PATH:
+
+```bash
+git --version && tmux -V && gh --version && claude --version
+```
 
 ## Quick install
 
