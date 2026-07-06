@@ -81,8 +81,11 @@ persisted so a service keeps the same port across restarts.
   session→slot, so ports stay stable across restarts and can never collide.
   When every slot is assigned, the session switcher warns and starting a
   port-consuming service in an unassigned session is hard-blocked (rather
-  than binding against a bogus slot and dying); delete a session to free
-  its slot. Each session runs its own shared-service stack on its slot's
+  than binding against a bogus slot and dying). To free a slot without
+  deleting the session, use **Release slot** (the ✕ on a session's slot tag,
+  or its right-click menu) — the session keeps its files and re-claims a
+  slot the next time it starts a service. Each session runs its own
+  shared-service stack on its slot's
   ports, generated on demand — so two sessions each get an isolated
   Postgres/Redis without a port clash.
 
