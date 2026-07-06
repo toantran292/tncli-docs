@@ -83,8 +83,12 @@ persisted so a service keeps the same port across restarts.
   port-consuming service in an unassigned session is hard-blocked (rather
   than binding against a bogus slot and dying). To free a slot without
   deleting the session, use **Release slot** (the ✕ on a session's slot tag,
-  or its right-click menu) — the session keeps its files and re-claims a
-  slot the next time it starts a service. Each session runs its own
+  or its right-click menu). As a safety measure this first **stops all of
+  that session's services and its shared stack** (so the ports are actually
+  freed and the next session to claim the slot can't collide) — agents like
+  Claude, which hold no port, keep running. The session keeps its files and
+  re-claims a slot the next time it starts a service. Each session runs its
+  own
   shared-service stack on its slot's
   ports, generated on demand — so two sessions each get an isolated
   Postgres/Redis without a port clash.
