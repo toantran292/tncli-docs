@@ -65,8 +65,9 @@ repos:
 
     # runtime
     shortcuts:                 # quick commands surfaced in the web UI
-      - cmd: bundle install
-        desc: Install deps
+      - cmd: bundle install     # runs in the worktree with the workspace's
+        desc: Install deps      # resolved env (.env.local) already sourced,
+                                # so DATABASE_URL etc. point at the right ports
     services:
       web:
         cmd: bundle exec puma -p $PORT
