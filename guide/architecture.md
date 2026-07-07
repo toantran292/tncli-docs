@@ -203,10 +203,13 @@ stays responsive:
   branch** — one aliased GraphQL query per on-screen (repo, branch),
   batched into a few requests — rather than one `gh` call per repo. This
   is both complete (a branch resolves no matter how many open PRs its repo
-  has) and minimal (only the branches on screen are fetched). Results are
-  cached per (repo, branch), served stale while refreshing, and warmed in
-  the background so the UI never blocks on GitHub; a cold cache is warmed
-  synchronously so badges appear on first paint.
+  has) and minimal (only the branches on screen are fetched). The query
+  returns the branch's most recent **open or merged** PR, so a merged
+  branch keeps its merged chip instead of vanishing (abandoned/closed PRs
+  are treated as noise and skipped). Results are cached per (repo, branch),
+  served stale while refreshing, and warmed in the background so the UI
+  never blocks on GitHub; a cold cache is warmed synchronously so badges
+  appear on first paint.
 - **GPU rendering, only where it counts.** Each terminal uses xterm.js;
   the WebGL renderer (the dominant memory cost) is attached **only to the
   visible tab**. Panes stream from tmux over a `pipe-pane` FIFO.
