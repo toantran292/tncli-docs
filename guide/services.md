@@ -61,9 +61,9 @@ under the top-level [`environments`](../reference/config#environments-profiles).
 
 ## Start / stop
 
-From the web UI: use the start/stop controls on any row. They work on
-services, repos (all services in that repo), or whole workspaces, and
-there's a control to stop everything in the project.
+From the web UI: use the start/stop controls on any service row, or the
+repo's **⋯** menu for **Start all / Stop all** of that repo's services at
+once. There's also a control to stop everything in the project.
 
 From the CLI:
 
