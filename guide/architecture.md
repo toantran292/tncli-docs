@@ -217,7 +217,10 @@ stays responsive:
   most-recently-used window stays mounted; the rest unmount and free their
   xterm + socket. tmux holds the real pane state, so re-selecting a
   suspended tab remounts and resyncs from a fresh `capture-pane` snapshot.
-  Memory stays roughly constant no matter how many tabs you open.
+  Memory stays roughly constant no matter how many tabs you open. A
+  suspended tab has no live socket, so the client heartbeats its open pane
+  ids to the server — the background orphan-reaper protects them and never
+  kills a pane that still has an open (even if unmounted) tab.
 - **Polite polling.** Polling pauses when the browser tab is hidden and is
   scoped and batched (one endpoint over many) to avoid request storms.
 
