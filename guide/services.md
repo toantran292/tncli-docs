@@ -85,6 +85,17 @@ tncli restart <service|combo>
 tncli status                  # list running services with PIDs
 ```
 
+## Live terminals
+
+Shells you open ("Open terminal", shortcut runs) live independently of their
+tab. **Closing a tab never stops the shell** — it keeps running and appears
+under **Live terminals** on the workspace Home, whether or not a tab is open
+on it. Click one to (re)attach a tab; the shell is only stopped when you hit
+its **×** there. This lets you close tabs to declutter without losing work.
+
+The tab bar can sit on any edge — right-click a tab (or the **⌂** Home tab)
+→ **Tab bar position** → top / bottom / left / right.
+
 ## Logs
 
 In the web UI, selecting a service opens its tmux window live in an
