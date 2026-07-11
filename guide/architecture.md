@@ -212,7 +212,9 @@ stays responsive:
   appear on first paint.
 - **GPU rendering, only where it counts.** Each terminal uses xterm.js;
   the WebGL renderer (the dominant memory cost) is attached **only to the
-  visible tab**. Panes stream from tmux over a `pipe-pane` FIFO.
+  visible tab**. Panes stream from tmux over a `pipe-pane` FIFO. The
+  unicode11 addon (`activeVersion='11'`) gives wide CJK/emoji glyphs correct
+  cell widths, so wide runs don't drift a column or glitch on scroll.
 - **Flat memory across tabs.** Only the active terminal tab plus a small
   most-recently-used window stays mounted; the rest unmount and free their
   xterm + socket. tmux holds the real pane state, so re-selecting a
