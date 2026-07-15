@@ -180,3 +180,24 @@ ui:
 
 Theme (dark / light / sepia) and language are chosen in the web dashboard,
 not in config.
+
+## Jira
+
+Optional. Links each workspace to its Jira issue (read-only): the workspace
+branch's leading `<project>-<number>` (e.g. `feat-123-add-login` →
+`FEAT-123`) is resolved and shown as a status chip on the workspace card —
+click it to open the issue. The API token is **never stored in config**;
+`token_env` names the environment variable that holds it.
+
+```yaml
+jira:
+  site: https://your-org.atlassian.net
+  email: you@example.com
+  token_env: JIRA_API_TOKEN      # export this in your shell before launching
+```
+
+Create a token at **id.atlassian.com → Security → API tokens**, then
+`export JIRA_API_TOKEN=…`. When creating a workspace, the **Jira ticket**
+field is required and becomes the branch prefix (ticket `FEAT-123` +
+description "add login" → branch `feat-123-add-login`), so the chip resolves
+automatically.
