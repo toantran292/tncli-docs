@@ -83,7 +83,12 @@ tncli start <service|combo>
 tncli stop  [service|combo]   # no arg → stop all
 tncli restart <service|combo>
 tncli status                  # list running services with PIDs
+tncli refresh                 # clear this project's tmux session (free ports)
 ```
+
+`tncli refresh` is the CLI counterpart of the web **Refresh tncli** — it
+kills the project's tmux session (every window) so stuck panes / orphaned
+ports are released; worktrees, config and shared containers are untouched.
 
 ## Live terminals
 
