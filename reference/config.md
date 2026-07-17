@@ -188,7 +188,8 @@ branch's leading `<project>-<number>` (e.g. `feat-123-add-login` →
 `FEAT-123`) is resolved and shown as a status chip on the workspace card —
 click it to open the issue. The API token is **never stored in config**;
 `token_env` names the environment variable that holds it. Configure it in
-the dashboard under Settings › **Jira**, or by hand:
+the dashboard under Settings › **Jira** (which has a **Test connection**
+button that verifies the site, email and token against Jira), or by hand:
 
 ```yaml
 jira:
