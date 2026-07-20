@@ -65,15 +65,16 @@ From the web UI: use the start/stop controls on any service row, or the
 repo's **⋯** menu for **Start all / Stop all** of that repo's services at
 once. There's also a control to stop everything in the project.
 
-::: tip Ports are never silently changed
-A service's port is deterministic per (workspace, service). If that port is
-already taken — a stale process, a leftover from a crash — tncli **refuses
-to start and tells you what's holding it** (`port 40200 is in use by node
-(pid 4123)…`) rather than quietly moving the service to a different port.
-Free the port (kill it) or use **Refresh tncli** (session switcher → Refresh
-tncli), which stops the session's services and frees their ports, then
-brings them back on the same numbers. It's the safe, tncli-scoped
-alternative to `tmux kill-server`.
+::: tip Ports never collide
+A service's port is deterministic per (workspace, service), and a workspace
+only ever claims a port **region (block) that is entirely free**. Starting a
+service checks its port first: if the region got contaminated (a stale
+process, a crash leftover), tncli **moves the whole workspace to a fresh,
+fully-free region** and starts there — it never starts on a taken port. Only
+when there's no clean region left does it refuse, telling you what's holding
+the port (`port 40200 is in use by node (pid 4123)…`); free it (kill it) or
+run **Refresh tncli** / `tncli refresh` to clear the session and reclaim
+ports.
 :::
 
 From the CLI:
