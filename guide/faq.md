@@ -65,12 +65,13 @@ delete the **active** session — switch to another first.
   access open the dashboard on **`localhost`**.
 - Right-click → **Copy** works too, and keeps your selection.
 
-## Scrolling / selecting inside a Claude tab feels off
+## Selecting inside a fullscreen TUI (Claude, htop, …)
 
-Claude's fullscreen TUI captures the mouse. Drag-to-select is handled for
-you (a drag becomes a real terminal selection, a plain click still reaches
-Claude), and the wheel scrolls Claude's view. If a selection vanishes as
-Claude repaints, it's preserved for Copy/⌘C anyway.
+A fullscreen TUI with mouse reporting owns the mouse — clicks, drags and
+the wheel go to the app, exactly as in a native terminal. To make a text
+selection anyway, hold **⌥ (Option/Alt) while dragging** — that forces a
+real terminal selection the app can't see. If the selection vanishes as
+the app repaints, it's still preserved for Copy/⌘C.
 
 ## Two services grabbed the same port / ports keep changing
 
