@@ -212,9 +212,22 @@ stays responsive:
   appear on first paint.
 - **GPU rendering, only where it counts.** Each terminal uses xterm.js;
   the WebGL renderer (the dominant memory cost) is attached **only to the
-  visible tab**. Panes stream from tmux over a `pipe-pane` FIFO. The
+  visible tab**. One WebGL failure (no GPU, remote desktop) demotes the
+  whole page to the DOM renderer instead of retrying on every tab switch,
+  and after a renderer swap the grid is re-fit only if the cell metrics
+  actually changed. Panes stream from tmux over a `pipe-pane` FIFO. The
   unicode11 addon (`activeVersion='11'`) gives wide CJK/emoji glyphs correct
-  cell widths, so wide runs don't drift a column or glitch on scroll.
+  cell widths, so wide runs don't drift a column or glitch on scroll;
+  `customGlyphs` draws box-drawing lines seamlessly and a minimum contrast
+  ratio of 4.5 keeps dim text readable on any theme.
+- **Batched streaming with real backpressure.** The server coalesces pane
+  output for ~5&nbsp;ms before shipping one WebSocket message, so a fast
+  build log is a few large frames instead of thousands of tiny ones. Flow
+  control is ack-based (the same watermarks VS Code uses for its terminal):
+  the client acknowledges bytes only **after xterm has parsed them**, and
+  once ~100&nbsp;KB is unacknowledged the server stops reading the pane
+  until the client drains below ~5&nbsp;KB. A program spraying output can't
+  freeze the tab or balloon the socket buffer — the pipe just pauses.
 - **Flat memory across tabs.** Only the active terminal tab plus a small
   most-recently-used window stays mounted; the rest unmount and free their
   xterm + socket. tmux holds the real pane state, so re-selecting a
